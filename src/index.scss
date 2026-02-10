@@ -1,0 +1,16 @@
+@use './styles/variables' as *;
+@use './styles/layout';
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: $font-family-base;
+  background-color: $color-bg;
+  color: $color-text;
+}
+

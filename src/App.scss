@@ -1,0 +1,140 @@
+@use './styles/variables' as *;
+
+.identity-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-lg;
+  background: radial-gradient(
+    circle at top,
+    rgba(15, 23, 42, 0.95),
+    rgba(15, 23, 42, 0.98)
+  );
+  backdrop-filter: blur(18px);
+}
+
+.identity-card {
+  width: 100%;
+  max-width: 420px;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  background: radial-gradient(circle at top left, #1f2937, #020617);
+  border: 1px solid rgba(55, 65, 81, 0.9);
+  box-shadow: $shadow-soft;
+  color: $color-text;
+
+  &__title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    margin: 0 0 $spacing-xs;
+  }
+
+  &__subtitle {
+    margin: 0 0 $spacing-lg;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+
+  &__label {
+    font-size: $font-size-xs;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: $color-text-muted;
+  }
+
+  &__input {
+    border-radius: $radius-md;
+    border: 1px solid rgba(75, 85, 99, 0.9);
+    background-color: rgba(15, 23, 42, 0.95);
+    padding: 0.55rem 0.7rem;
+    font-size: $font-size-sm;
+    color: $color-text;
+    outline: none;
+    transition:
+      border-color $transition-fast,
+      box-shadow $transition-fast,
+      background-color $transition-fast;
+
+    &::placeholder {
+      color: $color-text-muted;
+    }
+
+    &:focus {
+      border-color: rgba(59, 130, 246, 0.9);
+      box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.9);
+      background-color: rgba(15, 23, 42, 1);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  /* ✅ Select dropdown styling (Sass-safe) */
+  select.identity-card__input {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239ca3af' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.7rem center;
+    padding-right: 2.5rem;
+
+    option {
+      background-color: rgba(15, 23, 42, 1);
+      color: $color-text;
+    }
+  }
+
+  &__error {
+    font-size: $font-size-xs;
+    color: #ef4444;
+    margin-top: -0.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  &__button {
+    margin-top: $spacing-sm;
+    border-radius: 999px;
+    border: none;
+    padding: 0.6rem 0.9rem;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: #f9fafb;
+    cursor: pointer;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    box-shadow: 0 14px 24px rgba(37, 99, 235, 0.6);
+    transform: translateY(0);
+    transition:
+      transform $transition-fast,
+      box-shadow $transition-fast,
+      filter $transition-fast,
+      opacity $transition-fast;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 32px rgba(37, 99, 235, 0.9);
+      filter: saturate(1.1);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(1px) scale(0.98);
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.8);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: default;
+      box-shadow: none;
+    }
+  }
+}
