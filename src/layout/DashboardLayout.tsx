@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { Sidebar } from './Sidebar'
 import { ChatArea } from './ChatArea'
 import { WeatherPanel } from './WeatherPanel'
-import { LogoutButton } from '../auth/LogoutButton'
+import { LogoutButton } from '../components/LogoutButton'
 // import { LogoutButton } from './LogoutButton' // import the logout component
 
 type DashboardLayoutProps = {
