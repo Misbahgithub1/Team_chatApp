@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
@@ -71,3 +72,7 @@ export default defineConfig([
   },
 ])
 ```
+=======
+# Team_chatApp
+Real-time team chat application with user presence, country &amp; city selection, and live weather information for each team member. Built with React, TypeScript, Socket.io, and Node.js.
+>>>>>>> 49a92e07bd1f6a9166f625cc967381600e492c8e
