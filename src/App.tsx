@@ -142,6 +142,22 @@ function App() {
     }
   }
 
+  /* ----------------------------------
+     Logout handler
+  ----------------------------------- */
+  const handleLogout = () => {
+    localStorage.removeItem(STORAGE_KEY)
+    localStorage.removeItem(CITY_STORAGE_KEY)
+    localStorage.removeItem(COUNTRY_STORAGE_KEY)
+
+    setDisplayName(null)
+    setPendingName('')
+    setCity(null)
+    setPendingCity('')
+    setCountry(null)
+    setPendingCountry('')
+  }
+
   if (!isLoaded) return null
 
   return (
@@ -185,7 +201,6 @@ function App() {
                   </option>
                 ))}
               </select>
-
               {countriesError && (
                 <div className="identity-card__error">{countriesError}</div>
               )}
@@ -194,44 +209,20 @@ function App() {
               <label className="identity-card__label" htmlFor="city">
                 City
               </label>
-
-       
-                <select
-                  id="city"
-                  className="identity-card__input"
-                  value={pendingCity}
-                  onChange={(e) => setPendingCity(e.target.value)}
-                  disabled={!pendingCountry || isLoadingCities}
-                >
-                  <option value="" disabled>
-                    Select a city
-                  </option>
-
-                  {cities.map((city) => (
-                    <option key={city.name} value={city.name}>
-                      {city.name}
-                    </option>
-                  ))}
-                </select>
-
-                {/* subtle loader next to dropdown */}
-                {isLoadingCities && cities.length > 0 && (
-                  <span
-                    className="identity-card__loader"
-                    style={{
-                      position: 'absolute',
-                      right: '8px',
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      fontSize: '0.75rem',
-                      color: '#666',
-                    }}
-                  >
-                    ⏳
-                  </span>
-                )}
-         
-
+              <select
+  id="city"
+  className="identity-card__input"
+  value={pendingCity}
+  onChange={(e) => setPendingCity(e.target.value)}
+  disabled={!pendingCountry || isLoadingCities}
+>
+  <option value="" disabled>Select a city</option>
+  {cities.map((city, index) => (
+   <option key={`${city.name}-${index}`} value={city.name}>
+   {city.name}
+ </option>
+  ))}
+</select>
 
               {citiesError && (
                 <div className="identity-card__error">{citiesError}</div>
@@ -255,11 +246,15 @@ function App() {
         </div>
       )}
 
-      <DashboardLayout
-        displayName={displayName ?? ''}
-        city={city ?? ''}
-        country={country ?? ''}
-      />
+      {/* Pass logout handler correctly */}
+      {displayName && (
+        <DashboardLayout
+          displayName={displayName}
+          city={city ?? ''}
+          country={country ?? ''}
+          onLogout={handleLogout}
+        />
+      )}
     </>
   )
 }

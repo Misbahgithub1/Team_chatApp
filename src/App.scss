@@ -138,3 +138,16 @@
     }
   }
 }
+.logout-button {
+  background-color: #ef4444;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s;
+
+  &:hover {
+    background-color: #dc2626;
+  }
+}

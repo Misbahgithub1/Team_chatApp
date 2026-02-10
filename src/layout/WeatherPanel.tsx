@@ -2,6 +2,7 @@ import { useTeamWeather } from "../hooks/useTeamWeather"
 
 type WeatherPanelProps = {
   roomId: string
+  city?: string  
 }
 
 export function WeatherPanel({ roomId }: WeatherPanelProps) {
@@ -18,7 +19,6 @@ export function WeatherPanel({ roomId }: WeatherPanelProps) {
         {import.meta.env.DEV && (
           <span style={{ fontSize: '12px', color: '#fff', marginLeft: '8px' }}>
             {status} ({members.length})
-            
           </span>
         )}
       </header>
@@ -27,7 +27,7 @@ export function WeatherPanel({ roomId }: WeatherPanelProps) {
         {/* Render members as soon as they exist - prioritize showing members */}
         {members.length > 0 && (
           <>
-            {members.map((member) => {
+            {members.map((member, index) => {
               // Ensure weather object exists
               const weather = member.weather || { temperature: null, condition: null, icon: null }
 
@@ -38,11 +38,9 @@ export function WeatherPanel({ roomId }: WeatherPanelProps) {
                   : '—'
 
               // Format condition - capitalize first letter, handle null/undefined
-              // Show user-friendly message for configuration errors
               let condition = 'Loading weather…'
               if (weather?.condition) {
                 condition = weather.condition.charAt(0).toUpperCase() + weather.condition.slice(1)
-                // Make error messages more user-friendly
                 if (condition.toLowerCase().includes('weather service not configured')) {
                   condition = 'Weather unavailable'
                 }
@@ -52,15 +50,12 @@ export function WeatherPanel({ roomId }: WeatherPanelProps) {
               const locationCity = member.city || 'Unknown location'
               const locationCountry = member.country
 
+              // 🔹 Use unique key by combining username + index
               return (
-                <div key={member.username} className="weather-summary">
+                <div key={`${member.username}-${index}`} className="weather-summary">
                   <div>
-                    <div className="weather-summary__temp">
-                      {temperature}
-                    </div>
-                    <div className="weather-summary__meta">
-                      {condition}
-                    </div>
+                    <div className="weather-summary__temp">{temperature}</div>
+                    <div className="weather-summary__meta">{condition}</div>
                   </div>
 
                   <div>
@@ -86,9 +81,7 @@ export function WeatherPanel({ roomId }: WeatherPanelProps) {
         {/* Show loading ONLY if no members yet */}
         {isLoading && members.length === 0 && (
           <div className="weather-summary">
-            <div className="weather-summary__meta">
-              Loading team weather…
-            </div>
+            <div className="weather-summary__meta">Loading team weather…</div>
           </div>
         )}
 
@@ -102,9 +95,7 @@ export function WeatherPanel({ roomId }: WeatherPanelProps) {
         {/* Empty state */}
         {!isLoading && !hasError && members.length === 0 && (
           <div className="weather-summary">
-            <div className="weather-summary__meta">
-              No team members in this room.
-            </div>
+            <div className="weather-summary__meta">No team members in this room.</div>
           </div>
         )}
       </div>
