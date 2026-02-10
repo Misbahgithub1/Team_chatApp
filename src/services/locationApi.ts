@@ -17,32 +17,72 @@ const COUNTRIES_API =
 const CITIES_API =
   'https://countriesnow.space/api/v0.1/countries/cities'
 
+const CACHE_KEY = 'team_chat_countries_cache'
+const CACHE_DURATION = 7 * 24 * 60 * 60 * 1000 // 7 days
+
 /**
  * Fetch list of all countries
- * (NO CHANGE – already stable)
+ * Uses local storage caching to improve reliability and performance.
  */
 export async function fetchCountries(): Promise<Country[]> {
-  const response = await fetch(COUNTRIES_API)
+  try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 8000) // 8s timeout
 
-  if (!response.ok) {
-    throw new Error(`Failed to fetch countries: ${response.status}`)
+    const response = await fetch(COUNTRIES_API, { signal: controller.signal })
+    clearTimeout(timeoutId)
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch countries: ${response.status}`)
+    }
+
+    const data = await response.json()
+
+    const countries = data
+      .map((country: any) => ({
+        name: country.name.common,
+        code: country.cca2,
+      }))
+      .sort((a: Country, b: Country) =>
+        a.name.localeCompare(b.name)
+      )
+
+    // Cache the successful result
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify({
+        timestamp: Date.now(),
+        data: countries
+      }))
+    } catch (e) {
+      console.warn('Failed to cache countries data', e)
+    }
+
+    return countries
+  } catch (error) {
+    console.warn('Countries API failed or timed out, trying cache.', error)
+    
+    // Try to recover from cache
+    try {
+      const cached = localStorage.getItem(CACHE_KEY)
+      if (cached) {
+        const { timestamp, data } = JSON.parse(cached)
+        // Check if cache is valid (less than 7 days old)
+        if (Date.now() - timestamp < CACHE_DURATION) {
+          console.log('Restored countries from cache')
+          return data
+        }
+      }
+    } catch (cacheError) {
+      console.error('Failed to read from cache', cacheError)
+    }
+
+    // If API fails and no cache, return empty array (UI should handle empty state)
+    return []
   }
-
-  const data = await response.json()
-
-  return data
-    .map((country: any) => ({
-      name: country.name.common,
-      code: country.cca2,
-    }))
-    .sort((a: Country, b: Country) =>
-      a.name.localeCompare(b.name)
-    )
 }
 
 /**
  * Fetch list of cities for a given country
- * (FIXED – no crashes, no infinite loading)
  */
 export async function fetchCitiesByCountry(
   countryName: string
@@ -75,7 +115,6 @@ export async function fetchCitiesByCountry(
         a.name.localeCompare(b.name)
       )
   } catch (error) {
-    // IMPORTANT: never throw for free / unstable APIs
     console.warn(
       `Unable to load cities for ${countryName}`,
       error

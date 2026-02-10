@@ -64,6 +64,44 @@ async function fetchWeatherForCity(city) {
   const response = await fetch(url.toString())
 
   if (!response.ok) {
+    // If direct search failed (e.g. 404), try Geocoding API as fallback
+    if (response.status === 404) {
+      console.log(`[Weather] Direct city search failed for "${city}", trying Geocoding API...`)
+      try {
+        const geoUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(city)}&limit=1&appid=${WEATHER_API_KEY}`
+        const geoRes = await fetch(geoUrl)
+        const geoData = await geoRes.json()
+
+        if (Array.isArray(geoData) && geoData.length > 0) {
+          const { lat, lon } = geoData[0]
+          const weatherUrl = `${WEATHER_API_BASE_URL}?lat=${lat}&lon=${lon}&appid=${WEATHER_API_KEY}&units=metric`
+          
+          const wRes = await fetch(weatherUrl)
+          if (wRes.ok) {
+            const json = await wRes.json()
+            
+            const weatherPayload = {
+              city: json.name || city,
+              temperature: json.main?.temp ?? null,
+              condition: json.weather?.[0]?.description ?? 'Unknown',
+              icon: json.weather?.[0]?.icon ?? null,
+              timestamp: new Date().toISOString(),
+              source: 'openweathermap-geo',
+            }
+
+            weatherCache.set(cacheKey, {
+              data: weatherPayload,
+              fetchedAt: now,
+            })
+
+            return weatherPayload
+          }
+        }
+      } catch (geoErr) {
+        console.warn(`[Weather] Geocoding fallback failed: ${geoErr.message}`)
+      }
+    }
+
     const body = await response.text()
     throw new Error(`Weather API failed: ${response.status} ${body}`)
   }
@@ -106,12 +144,13 @@ async function buildTeamWeather(roomId) {
 
   const results = []
 
-  for (const user of room.users.values()) {
+  for (const [id, user] of room.users.entries()) {
     const city = user.city || DEFAULT_CITY
 
     try {
       const weather = await fetchWeatherForCity(city)
       results.push({
+        id,
         username: user.name,
         city,
         country: user.country,
@@ -121,8 +160,10 @@ async function buildTeamWeather(roomId) {
           icon: weather.icon,
         },
       })
-    } catch {
+    } catch (err) {
+      console.error(`[Weather] Error fetching for ${city}:`, err.message)
       results.push({
+        id,
         username: user.name,
         city,
         country: user.country,
@@ -130,6 +171,7 @@ async function buildTeamWeather(roomId) {
           temperature: null,
           condition: 'Weather unavailable',
           icon: null,
+          error: err.message
         },
       })
     }
