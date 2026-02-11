@@ -25,7 +25,7 @@ type UseChatResult = {
 }
 
 /**
- * 🔊 App-level notification sound (no audio file)
+ * App-level notification sound (no audio file)
  */
 function playNotificationSound() {
   try {
