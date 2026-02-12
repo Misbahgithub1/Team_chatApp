@@ -45,7 +45,7 @@ export function DashboardLayout({
 
           {/* Weather Panel */}
           <section className="col-12 col-md-3 col-lg-3 app-weather">
-            <WeatherPanel roomId="general" city={city} />
+            <WeatherPanel roomId="general" />
           </section>
         </div>
 

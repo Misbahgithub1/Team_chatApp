@@ -13,10 +13,10 @@ const PORT = Number(process.env.PORT) || 4000
 const WEATHER_API_KEY = process.env.WEATHER_API_KEY
 const WEATHER_API_BASE_URL = 'https://api.openweathermap.org/data/2.5/weather'
 const WEATHER_CACHE_TTL = 10 * 60 * 1000 // 10 minutes
-const DEFAULT_CITY = 'San Francisco'
+
 
 if (!WEATHER_API_KEY) {
-  console.warn('⚠️ WEATHER_API_KEY is missing in .env file')
+  console.warn('WEATHER_API_KEY is missing in .env file')
 }
 
 /* ----------------------------------
@@ -145,7 +145,7 @@ async function buildTeamWeather(roomId) {
   const results = []
 
   for (const [id, user] of room.users.entries()) {
-    const city = user.city || DEFAULT_CITY
+    const city = user.city 
 
     try {
       const weather = await fetchWeatherForCity(city)
@@ -313,5 +313,5 @@ app.get('/api/weather', async (req, res) => {
    SERVER START
 ----------------------------------- */
 server.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`)
+  console.log(` Server running on http://localhost:${PORT}`)
 })

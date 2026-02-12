@@ -16,7 +16,7 @@ export function useMembersTime(members: Member[]): MemberTime[] {
   return members.map(member => {
     const { time, status } = useCityTime(
       member.city,
-      member.country ?? undefined // ✅ null → undefined
+      member.country ?? undefined //  null → undefined
     );
 
     return {
