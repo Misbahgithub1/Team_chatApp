@@ -342,7 +342,7 @@
 
   .weather-summary {
     display: grid;
-    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
     gap: $spacing-sm;
     align-items: center;
   }

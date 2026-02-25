@@ -3,6 +3,7 @@ import type { Socket } from 'socket.io-client'
 import { getSocket } from '../services/socketClient'
 
 export type TeamMemberWeather = {
+  id: string
   username: string
   city: string
   country: string | null
@@ -10,6 +11,7 @@ export type TeamMemberWeather = {
     temperature: number | null
     condition: string
     icon: string | null
+    error?: string
   } | null
 }
 

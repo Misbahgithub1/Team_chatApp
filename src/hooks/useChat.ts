@@ -25,7 +25,7 @@ type UseChatResult = {
 }
 
 /**
- * 🔊 App-level notification sound (no audio file)
+ * App-level notification sound (no audio file)
  */
 function playNotificationSound() {
   try {
@@ -108,7 +108,7 @@ export function useChat({
         },
       ])
 
-      // 🔔 Play sound only for incoming messages
+      //  Play sound only for incoming messages
       if (!fromSelf && document.hidden) {
         playNotificationSound()
       }
